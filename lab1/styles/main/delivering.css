@@ -1,0 +1,77 @@
+.delivering {
+  display: flex;
+  flex-direction: column;
+  padding: 80px 130px;
+  color: #2D3436;
+}
+.delivering-title {
+  font-style: normal;
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 48px;
+  padding-bottom: 15px;
+}
+
+.delivering-text {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 36px;
+  width: 900px;
+  padding-bottom: 40px;
+}
+
+.delivering-items {
+  display: flex;
+  justify-content: space-between;
+}
+
+.delivering-item__title {
+  font-style: normal;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 36px;
+  padding-bottom: 16px;
+}
+
+.delivering-item__text {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 32px;
+  padding-bottom: 16px;
+  width: 255px;
+}
+
+.delivering-item__button {
+  border: 1px solid #ADADAD;
+  border-radius: 16px;
+  background-color: transparent;
+  width: 146px;
+  height: 48px;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 32px;
+  color: #6C5CE7;
+}
+
+.icon-phone {
+  background: #E84393;
+  border-radius: 999px;
+}
+
+.icon-pie {
+  background: #0984E3;
+  border-radius: 999px;
+}
+
+.icon-zap {
+  background: #6C5CE7;
+  border-radius: 999px;
+}
+
+.icon-thumbs {
+  background: #00B894;
+  border-radius: 999px;
+}

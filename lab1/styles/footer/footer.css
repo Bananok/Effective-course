@@ -1,0 +1,241 @@
+.footer {
+  position: relative;
+  display: flex;
+  padding: 0 135px;
+  justify-content: space-between;
+  padding-bottom: 200px;
+}
+
+.footer-item {
+  width: 50%;
+}
+
+.footer-title {
+  font-style: normal;
+  font-weight: 800;
+  font-size: 12px;
+  line-height: 15px;
+  text-transform: uppercase;
+  color: #ADADAD;
+  letter-spacing: 2.5px;
+}
+
+.footer-icons {
+  display: flex;
+  padding-bottom: 51px;
+  padding-top: 10px;
+}
+
+.footer-icon {
+  padding-right: 40px;
+  cursor: pointer;
+}
+
+.links {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  row-gap: 16px;
+  column-gap: 30px;
+  padding-top: 16px;
+}
+
+.links__item-1 {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 24px;
+  width: 170px;
+  text-decoration: none;
+  color: #2D3436;
+}
+
+.links__item-2 {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 24px;
+  width: 170px;
+  text-decoration-line: underline;
+  color: #2D3436;
+}
+
+.links__item-3 {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 24px;
+  width: 170px;
+  text-decoration: none;
+  color: #2D3436;
+}
+
+.links__item-4 {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 24px;
+  width: 170px;
+  text-decoration: none;
+  color: #2D3436;
+}
+
+.links__item-5 {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 24px;
+  width: 170px;
+  text-decoration: none;
+  color: #2D3436;
+}
+
+.links__item-6 {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 24px;
+  width: 170px;
+  text-decoration: none;
+  color: #2D3436;
+}
+
+.links__item-7 {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 24px;
+  width: 170px;
+  text-decoration: none;
+  color: #2D3436;
+}
+
+.links__item-8 {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 24px;
+  width: 170px;
+  text-decoration: none;
+  color: #2D3436;
+}
+
+.mail {
+  font-style: normal;
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 48px;
+  color: #6C5CE7;
+  padding-bottom: 50px;
+}
+
+.footer-form {
+  padding-top: 20px;
+}
+
+.user-inputs {
+  display: flex;
+  justify-content: space-between;
+}
+
+.user-inputs__item-1 {
+  background: rgba(194, 194, 194, 0.24);
+  border-radius: 16px;
+  width: 42%;
+  height: 50px;
+  border: none;
+  padding: 8px 16px;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 32px;
+  color: #2D3436;
+}
+.user-inputs__item-1::placeholder {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 32px;
+    color: #2D3436;
+    background: url(../../img/icon-user.svg) no-repeat;
+    background-position: right;
+  }
+
+.user-inputs__item-2 {
+  background: rgba(194, 194, 194, 0.24);
+  border-radius: 16px;
+  width: 42%;
+  height: 50px;
+  border: none;
+  padding: 8px 16px;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 32px;
+  color: #2D3436;
+}
+
+.user-inputs__item-2::placeholder {
+    font-style: normal;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 32px;
+    color: #2D3436;
+    background: url(../../img/icon-mail.svg) no-repeat;
+    background-position: right;
+  }
+
+.information-inputs {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+  height: 80px;
+}
+
+.information-inputs__item {
+  background: rgba(194, 194, 194, 0.24);
+  border-radius: 16px;
+  width: 60%;
+  height: 65%;
+  border: none;
+  padding: 16px;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 32px;
+  letter-spacing: 0.2px;
+  color: #6C5CE7;
+}
+
+.information-inputs__item::placeholder {
+  font-style: normal;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 32px;
+  letter-spacing: 0.2px;
+  color: #6C5CE7;
+  background: url(../../img/icon-edit.svg) no-repeat;
+  background-position: right;
+}
+
+.form-button {
+  width: 30%;
+  height: 100%;
+  color: #FFFFFF;
+  text-shadow: 0px 2px 4px rgba(38, 50, 56, 0.16), 0px 4px 8px rgba(38, 50, 56, 0.08);
+  font-style: normal;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 36px;
+  background: #6C5CE7;
+  box-shadow: 0px 8px 24px rgba(38, 50, 56, 0.1), 0px 16px 32px rgba(38, 50, 56, 0.08);
+  border-radius: 16px;
+  border: none;
+  cursor: pointer;
+}
+.footer-background {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
+

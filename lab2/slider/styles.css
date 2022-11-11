@@ -1,0 +1,46 @@
+.slider {
+  position: relative;
+  margin: 0 auto;
+  justify-content: center;
+  width: 500px;
+  height: 300px;
+  border: 1px solid orange;
+  overflow: hidden;
+}
+
+.slider-items {
+  display: flex;
+  width: max-content;
+  height: 300px;
+}
+
+.slider-item {
+  width: 500px;
+  text-align: center;
+}
+
+.button-left {
+  padding: 20px;
+  position: absolute;
+  left: 5%;
+  top: 40%;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 25px;
+  z-index: 2;
+}
+
+.button-right {
+  position: absolute;
+  right: 5%;
+  top: 40%;
+  padding: 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 25px;
+  z-index: 2;
+}
+
+.button-left:hover,.button-right:hover {
+  background-color: beige;
+}

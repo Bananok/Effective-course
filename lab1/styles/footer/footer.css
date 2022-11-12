@@ -4,10 +4,7 @@
   padding: 0 135px;
   justify-content: space-between;
   padding-bottom: 200px;
-}
-
-.footer-item {
-  width: 50%;
+  flex: 1;
 }
 
 .footer-title {
@@ -35,7 +32,6 @@
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   row-gap: 16px;
-  column-gap: 30px;
   padding-top: 16px;
 }
 

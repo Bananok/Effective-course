@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="styles.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="wrapper">
+        <div class="time-buttons">
+            <button class="time-button" onclick="setTime(1, 0)">1 минута</button>
+            <button class="time-button" onclick="setTime(5, 0)">5 минут</button>
+            <button class="time-button" onclick="setTime(10, 0)">10 минут</button>
+        </div>
+        <div class="timer-inputs">
+            <input class="timer-input" type="number" value=0>
+            <input class="timer-input" type="number" value=0>
+        </div>
+        <div class="timer-buttons">
+            <button id="start-button" onclick="start()">start</button>
+            <button id="stop-button" onclick="stop()">stop</button>
+            <button id="reset-button" onclick="reset()">reset</button>
+        </div>
+    </div>
+</body>
+<script src="./index.js"></script>
+
+</html>

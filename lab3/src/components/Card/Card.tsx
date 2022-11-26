@@ -1,20 +1,26 @@
 import React, { FC } from "react";
 
+import { NavLink } from "react-router-dom";
 import styled from "styled-components";
-import { Card as CardType } from "types/card";
+
+import { Card as CardType } from "../../types/card";
 
 interface CardProps {
   card: CardType;
 }
 
 const Card: FC<CardProps> = ({ card }) => {
-  const { title, desc, image } = card;
+  const { id, title, desc, image } = card;
 
   return (
     <Root>
-      <ImageItem src={image} />
+      <NavLink to={String(id)}>
+        <ImageItem src={image} />
+      </NavLink>
       <TextItem>
-        <Title>{title}</Title>
+        <NavLink to={String(id)} style={{ textDecoration: "none" }}>
+          <Link>{title}</Link>
+        </NavLink>
         <Description>{desc}</Description>
       </TextItem>
     </Root>
@@ -29,7 +35,7 @@ const ImageItem = styled.img`
   height: 250px;
 `;
 const TextItem = styled.div``;
-const Title = styled.h3`
+const Link = styled.h3`
   color: ${({ theme }) => theme.colors.red};
   ${({ theme }) => theme.typography.subtitleM};
   padding-top: 10px;

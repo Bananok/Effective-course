@@ -3,4 +3,7 @@ export interface Card {
   image: string;
   title: string;
   desc: string;
+  comics?: number[];
+  series?: number[];
+  characters?: number[];
 }

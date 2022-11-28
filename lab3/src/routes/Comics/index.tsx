@@ -5,30 +5,37 @@ import styled from "styled-components";
 import Card from "../../components/Card";
 import { Card as CardType } from "../../types/card";
 
+export const сomics: CardType[] = [
+  {
+    id: 0,
+    title: "Captain America/Iron Man (2021 - 2022)",
+    desc: "A government agent turned Hydra provocateur stages a daring breakout on her way to prison.",
+    image:
+      "https://i.annihil.us/u/prod/marvel/i/mg/2/10/61a8e1bdbd3ef/standard_incredible.jpg",
+    characters: [0, 1, 2],
+    series: [0, 1, 2],
+  },
+  {
+    id: 1,
+    title: "Captain America: Steve Rogers (2016) #10",
+    desc: "The unbeatable Taskmaster is back! And what's worse for Cap is that he's learned Steve Rogers' greatest secret!",
+    image:
+      "https://i.annihil.us/u/prod/marvel/i/mg/6/50/58824eb0b4d44/clean.jpg",
+    characters: [1, 2, 3],
+    series: [1, 2, 3],
+  },
+  {
+    id: 2,
+    title: "Thor (2020 - Present)",
+    desc: "A BRAND-NEW, SUPERSTAR CREATIVE TEAM TAKES THE KING OF ASGARD TO NEW REALMS OF GLORY! The prince is now a king. All Asgard lies before Thor, the God of Thunder. And after many months of war, the Ten Realms are finally at peace. But the skies above the Realm Eternal are never clear for long. The Black Winter is coming. And the God of the Storm will be powerless before it.",
+    image:
+      "https://i.annihil.us/u/prod/marvel/i/mg/3/20/5e011a4977a80/standard_incredible.jpg",
+    characters: [0, 1, 2],
+    series: [0, 1, 2],
+  },
+];
+
 const Comics: FC = () => {
-  const сomics: CardType[] = [
-    {
-      id: 0,
-      title: "Captain America/Iron Man (2021 - 2022)",
-      desc: "A government agent turned Hydra provocateur stages a daring breakout on her way to prison.",
-      image:
-        "https://i.annihil.us/u/prod/marvel/i/mg/2/10/61a8e1bdbd3ef/standard_incredible.jpg",
-    },
-    {
-      id: 1,
-      title: "Captain America: Steve Rogers (2016) #10",
-      desc: "The unbeatable Taskmaster is back! And what's worse for Cap is that he's learned Steve Rogers' greatest secret!",
-      image:
-        "https://i.annihil.us/u/prod/marvel/i/mg/6/50/58824eb0b4d44/clean.jpg",
-    },
-    {
-      id: 2,
-      title: "Thor (2020 - Present)",
-      desc: "A BRAND-NEW, SUPERSTAR CREATIVE TEAM TAKES THE KING OF ASGARD TO NEW REALMS OF GLORY! The prince is now a king. All Asgard lies before Thor, the God of Thunder. And after many months of war, the Ten Realms are finally at peace. But the skies above the Realm Eternal are never clear for long. The Black Winter is coming. And the God of the Storm will be powerless before it.",
-      image:
-        "https://i.annihil.us/u/prod/marvel/i/mg/3/20/5e011a4977a80/standard_incredible.jpg",
-    },
-  ];
   return (
     <Root>
       <Title>

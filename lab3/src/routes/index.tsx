@@ -1,5 +1,6 @@
 import { RouteObject } from "react-router-dom";
 
+import About from "./About";
 import Characters from "./Characters";
 import Comics from "./Comics";
 import Series from "./Series";
@@ -11,14 +12,32 @@ export const routes: RouteObject[] = [
   },
   {
     path: "/",
-    element: <Characters />,
+    children: [
+      { index: true, element: <Characters /> },
+      {
+        path: "/:id",
+        element: <About entities="characters" hasComics hasSeries />,
+      },
+    ],
   },
   {
     path: "/comics",
-    element: <Comics />,
+    children: [
+      { index: true, element: <Comics /> },
+      {
+        path: "/comics/:id",
+        element: <About entities="comics" hasCharacters hasSeries />,
+      },
+    ],
   },
   {
     path: "/series",
-    element: <Series />,
+    children: [
+      { index: true, element: <Series /> },
+      {
+        path: "/series/:id",
+        element: <About entities="series" hasCharacters hasComics />,
+      },
+    ],
   },
 ];

@@ -15,7 +15,7 @@ const Characters: FC = () => {
   const { themeIsBlack } = appStore;
   const [searchString, setSearchString] = useState<string>("");
   const [scrollCharacters, setScrollCharacters] = useState<CardType[]>([]);
-  const [offset, setOffset] = useState(1);
+  const [offset, setOffset] = useState<number>(1);
   const [error, setError] = useState<string>();
   const { t } = useTranslation();
 

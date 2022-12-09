@@ -1,8 +1,6 @@
 import { Card, EntityResponse } from "../types/card";
 import axios from "./helpers/axios";
 
-export const getSeries = () => axios.get<EntityResponse>("series");
-
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
   async getSeriesById(seriesId?: string): Promise<Card[]> {

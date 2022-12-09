@@ -25,7 +25,7 @@ export const TYPOGRAPHY = {
     font-family: "Open Sans", sans-serif;
     font-style: normal;
     font-weight: 600;
-    font-size: 18px;
+    font-size: 25px;
     line-height: 25px;
   `,
   regularL: `
@@ -76,5 +76,10 @@ export const TYPOGRAPHY = {
     font-weight: 300;
     font-size: 10px;
     line-height: 12px;
+  `,
+  desRegular: `
+    font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+    font-size: 15px;
+    font-style: normal;
   `,
 };

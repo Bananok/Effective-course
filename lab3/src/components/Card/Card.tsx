@@ -10,18 +10,18 @@ interface CardProps {
 }
 
 const Card: FC<CardProps> = ({ card }) => {
-  const { id, title, desc, image } = card;
+  const { id, name, title, description, thumbnail } = card;
 
   return (
     <Root>
-      <NavLink to={String(id)}>
-        <ImageItem src={image} />
+      <NavLink style={{ maxWidth: "max-content" }} to={String(id)}>
+        <ImageItem src={`${thumbnail.path}.${thumbnail.extension}`} />
       </NavLink>
       <TextItem>
         <NavLink to={String(id)} style={{ textDecoration: "none" }}>
-          <Link>{title}</Link>
+          <Link>{name || title}</Link>
         </NavLink>
-        <Description>{desc}</Description>
+        <Description>{description}</Description>
       </TextItem>
     </Root>
   );
@@ -29,18 +29,27 @@ const Card: FC<CardProps> = ({ card }) => {
 
 export default Card;
 
-const Root = styled.div``;
-const ImageItem = styled.img`
+const Root = styled.div`
   width: 100%;
+  display: flex;
+  flex-direction: flex;
+  align-items: center;
+`;
+const ImageItem = styled.img`
+  width: 500px;
   height: 250px;
 `;
-const TextItem = styled.div``;
+const TextItem = styled.div`
+  padding-left: 50px;
+`;
 const Link = styled.h3`
   color: ${({ theme }) => theme.colors.red};
   ${({ theme }) => theme.typography.subtitleM};
   padding-top: 10px;
+  margin-bottom: 40px;
 `;
 const Description = styled.div`
   color: ${({ theme }) => theme.colors.gray};
-  ${({ theme }) => theme.typography.lightM};
+  ${({ theme }) => theme.typography.desRegular};
+  width: 700px;
 `;

@@ -1,13 +1,6 @@
 import { Card, EntityResponse } from "../types/card";
 import axios from "./helpers/axios";
 
-export const getCharacters = (nameStartsWith?: string) =>
-  axios.get<EntityResponse>(`characters`, {
-    params: {
-      nameStartsWith,
-    },
-  });
-
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
   async getCharacterById(characterId?: string): Promise<Card[]> {

@@ -1,78 +1,102 @@
-import React, { FC } from "react";
+import React, { FC, useCallback, useEffect, useState } from "react";
 
+import { observer } from "mobx-react-lite";
+import { useTranslation } from "react-i18next";
+import { Virtuoso } from "react-virtuoso";
 import styled from "styled-components";
 
+import charactersApi from "../../api/characters";
 import Card from "../../components/Card";
+import Loader from "../../components/Loader";
+import appStore from "../../stores/appStore";
 import { Card as CardType } from "../../types/card";
 
-export const characters: CardType[] = [
-  {
-    id: 0,
-    title: "IRON MAN",
-    desc: "Inventor Tony Stark applies his genius for high-tech solutions to problems as Iron Man, the armored Avenger.",
-    image:
-      "https://terrigen-cdn-dev.marvel.com/content/prod/1x/002irm_com_crd_01.jpg",
-    comics: [0, 1],
-    series: [0, 1, 2],
-  },
-  {
-    id: 1,
-    title: "CAPTAIN AMERICA",
-    desc: "Recipient of the Super Soldier serum, World War II hero Steve Rogers fights for American ideals as one of the world’s mightiest heroes and the leader of the Avengers.",
-    image:
-      "https://terrigen-cdn-dev.marvel.com/content/prod/1x/003cap_com_crd_01.jpg",
-    comics: [1, 2],
-    series: [1, 2, 3],
-  },
-  {
-    id: 2,
-    title: "Spider-Man (Miles Morales)",
-    desc: "In the alternate reality of Earth-1610, a young New York City teen was bitten by a genetically enhanced spider. When the Peter Parker of that dimension was killed, the teen—titled Miles Morales—was inspired to take up the fallen mantle.",
-    image:
-      "https://terrigen-cdn-dev.marvel.com/content/prod/1x/037smm_com_crd_01.jpg",
-    comics: [1, 2],
-    series: [2, 3, 4],
-  },
-  {
-    id: 3,
-    title: "Hulk",
-    desc: "Exposed to heavy doses of gamma radiation, scientist Bruce Banner transforms into the mean, green rage machine called the Hulk.",
-    image:
-      "https://terrigen-cdn-dev.marvel.com/content/prod/1x/006hbb_com_crd_01.jpg",
-    comics: [0, 1, 2],
-    series: [0, 1, 2],
-  },
-  {
-    id: 4,
-    title: "thor",
-    desc: "Thor Odinson wields the power of the ancient Asgardians to fight evil throughout the Nine Realms and beyond.",
-    image:
-      "https://terrigen-cdn-dev.marvel.com/content/prod/1x/004tho_com_crd_01.jpg",
-    comics: [0, 1, 2],
-    series: [0, 1, 2],
-  },
-];
-
 const Characters: FC = () => {
+  const { themeIsBlack } = appStore;
+  const [searchString, setSearchString] = useState<string>("");
+  const [scrollCharacters, setScrollCharacters] = useState<CardType[]>([]);
+  const [offset, setOffset] = useState<number>(1);
+  const [error, setError] = useState<string>();
+  const { t } = useTranslation();
+
+  const handleSetSearchString = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setSearchString(event.target.value);
+  };
+  const handleSubmitSearch = (event: React.ChangeEvent<HTMLFormElement>) => {
+    searchString
+      ? charactersApi
+          .getSearchCharacters(0, searchString)
+          .then((res) => setScrollCharacters(res))
+      : charactersApi
+          .getCharactersScroll(0)
+          .then((res) => setScrollCharacters(res));
+    event.preventDefault();
+  };
+
+  const getCharacters = useCallback(async () => {
+    setOffset(offset + 1);
+    searchString
+      ? charactersApi
+          .getSearchCharacters(offset, searchString)
+          .then((res) =>
+            setScrollCharacters((prevState) => [...prevState, ...res])
+          )
+      : charactersApi
+          .getCharactersScroll(offset)
+          .then((res) =>
+            setScrollCharacters((prevState) => [...prevState, ...res])
+          );
+  }, [setScrollCharacters, offset, searchString]);
+
+  useEffect(() => {
+    charactersApi
+      .getCharactersScroll(0)
+      .then((res) => setScrollCharacters(res))
+      .catch((error: { message: string }) => setError(error.message));
+  }, []);
   return (
     <Root>
-      <Title>
-        Characters<NumberCharacters>({characters.length})</NumberCharacters>
-      </Title>
-      <SearchItem>
-        <SearchInput placeholder="Search for Characters by title" />
-        <SearchButton>SEARCH</SearchButton>
-      </SearchItem>
-      <Cards>
-        {characters.map((character) => (
-          <Card key={character.id} card={character} />
-        ))}
-      </Cards>
+      {!!scrollCharacters.length ? (
+        <>
+          <Title>
+            {t("characters")}
+            <NumberCharacters>({scrollCharacters.length})</NumberCharacters>
+          </Title>
+          <SearchItem onSubmit={handleSubmitSearch}>
+            <SearchInput
+              value={searchString}
+              onChange={handleSetSearchString}
+              placeholder={t("search placeholder") || ""}
+            />
+            <SearchButton themeIsBlack={themeIsBlack} type="submit">
+              {t("search")}
+            </SearchButton>
+          </SearchItem>
+          <Cards>
+            <Virtuoso
+              style={{
+                height: "400px",
+                width: "100%",
+              }}
+              data={scrollCharacters}
+              endReached={getCharacters}
+              overscan={200}
+              itemContent={(index, character) => {
+                return <Card key={index} card={character} />;
+              }}
+            />
+          </Cards>
+        </>
+      ) : (
+        <Loader error={error} />
+      )}
     </Root>
   );
 };
 
-export default Characters;
+export default observer(Characters);
 
 const Root = styled.div``;
 const Title = styled.h1`
@@ -93,20 +117,19 @@ const SearchItem = styled.form`
 const SearchInput = styled.input`
   width: 70%;
 `;
-const SearchButton = styled.button`
+const SearchButton = styled.button<{ themeIsBlack: boolean }>`
   width: 20%;
-  background-color: ${({ theme }) => theme.colors.yellow};
+  background-color: ${({ theme, themeIsBlack }) =>
+    themeIsBlack ? theme.colors.black : theme.colors.yellow};
+  border-color: ${({ themeIsBlack, theme }) =>
+    themeIsBlack ? theme.colors.white : "black"};
   color: ${({ theme }) => theme.colors.white};
   ${({ theme }) => theme.typography.lightL};
   cursor: pointer;
 `;
 const Cards = styled.div`
-  margin: 0 auto;
-  width: 90%;
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  grid-template-rows: repeat(1, 1fr);
-  column-gap: 20px;
-  row-gap: 10px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
   overflow: hidden;
 `;

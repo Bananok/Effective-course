@@ -16,7 +16,7 @@ export const routes: RouteObject[] = [
       { index: true, element: <Characters /> },
       {
         path: "/:id",
-        element: <About entities="characters" hasComics hasSeries />,
+        element: <About entities="characters" />,
       },
     ],
   },
@@ -26,7 +26,7 @@ export const routes: RouteObject[] = [
       { index: true, element: <Comics /> },
       {
         path: "/comics/:id",
-        element: <About entities="comics" hasCharacters hasSeries />,
+        element: <About entities="comics" />,
       },
     ],
   },
@@ -36,7 +36,7 @@ export const routes: RouteObject[] = [
       { index: true, element: <Series /> },
       {
         path: "/series/:id",
-        element: <About entities="series" hasCharacters hasComics />,
+        element: <About entities="series" />,
       },
     ],
   },

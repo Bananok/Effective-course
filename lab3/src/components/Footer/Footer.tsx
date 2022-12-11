@@ -1,14 +1,20 @@
 import React, { FC } from "react";
 
+import { observer } from "mobx-react-lite";
+import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 
 import LogoIcon from "../../assets/icons/logo.svg";
+import appStore from "../../stores/appStore";
 
 const Footer: FC = () => {
+  const { themeIsBlack } = appStore;
+  const { t } = useTranslation();
+
   return (
-    <Root>
+    <Root themeIsBlack={themeIsBlack}>
       <Logo src={LogoIcon} alt="Logo" />
-      <TextItem>Data provided by Marvel. © 2022 MARVEL</TextItem>
+      <TextItem>{t("data provided")} Marvel. © 2022 MARVEL</TextItem>
       <Link
         href="https://developer.marvel.com/"
         target="_blank"
@@ -20,15 +26,15 @@ const Footer: FC = () => {
   );
 };
 
-export default Footer;
+export default observer(Footer);
 
-const Root = styled.div`
-  width: 100vw;
+const Root = styled.div<{ themeIsBlack: boolean }>`
+  width: 100%;
   display: flex;
-  flex-direction: column;
-  justify-content: end;
-  height: 120px;
-  background-color: ${({ theme }) => theme.colors.gray};
+  align-items: center;
+  height: 70px;
+  background-color: ${({ theme, themeIsBlack }) =>
+    themeIsBlack ? "transparent" : theme.colors.gray};
   color: ${({ theme }) => theme.colors.white};
   ${({ theme }) => theme.typography.lightL};
 `;

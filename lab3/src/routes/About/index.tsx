@@ -1,75 +1,96 @@
-import React, { FC } from "react";
+import React, { FC, useEffect, useState } from "react";
 
+import { observer } from "mobx-react-lite";
+import { useTranslation } from "react-i18next";
 import { useParams } from "react-router";
 import styled from "styled-components";
 
+import characters from "../../api/characters";
+import comics from "../../api/comics";
+import series from "../../api/series";
+import Loader from "../../components/Loader";
+import appStore from "../../stores/appStore";
 import { Card } from "../../types/card";
-import { characters } from "../Characters";
-import { сomics } from "../Comics";
-import { series } from "../Series";
-
-const determineEntity = (entity: string) => {
-  let entities: Card[] = series;
-  if (entity === "characters") entities = characters;
-  else if (entity === "comics") entities = сomics;
-  return entities;
-};
 
 interface AboutProps {
   entities: string;
-  hasCharacters?: boolean;
-  hasComics?: boolean;
-  hasSeries?: boolean;
 }
 
-const About: FC<AboutProps> = ({
-  entities,
-  hasCharacters,
-  hasComics,
-  hasSeries,
-}) => {
+const About: FC<AboutProps> = ({ entities }) => {
   const { id } = useParams();
-  const item = determineEntity(entities).find(
-    (entity) => entity.id === Number(id)
-  );
-  if (!item) return <>Not Found item with id {id}</>;
-  const { title, image, desc } = item;
+  const [item, setItem] = useState<Card>();
+  const [error, setError] = useState<string>("");
+  const { themeIsBlack } = appStore;
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    if (entities === "characters")
+      characters
+        .getCharacterById(id)
+        .then((res) => setItem(res[0]))
+        .catch((error: { message: string }) => setError(error.message));
+    else if (entities === "comics")
+      comics
+        .getComicById(id)
+        .then((res) => setItem(res[0]))
+        .catch((error: { message: string }) => setError(error.message));
+    else
+      series
+        .getSeriesById(id)
+        .then((res) => setItem(res[0]))
+        .catch((error: { message: string }) => setError(error.message));
+  }, [id, entities]);
+
+  if (!item) return <Loader error={error} />;
+
   return (
     <Root>
-      <ImageItem src={image} />
-      <TextItem>
+      <ImageItem src={`${item.thumbnail.path}.${item.thumbnail.extension}`} />
+      <TextItem themeIsBlack={themeIsBlack}>
         <TitleItem>
-          <Title>{title}</Title>
-          <Desription>{desc}</Desription>
+          <Title>{item.name || item.title}</Title>
+          <Desription>{item.description}</Desription>
         </TitleItem>
-        <CharactersItem hasCharacters={hasCharacters}>
-          <LinkTitle>Characters</LinkTitle>
+        <CharactersItem hasCharacters={!!item.characters}>
+          <LinkTitle>{t("characters")}</LinkTitle>
           <Links>
-            {item.characters?.map((id) => (
-              <MyLink key={id} href={`/${id}`}>
-                {characters.find((character) => character.id === id)?.title}
-              </MyLink>
-            ))}
+            {item.characters?.items?.map((character) => {
+              const strings = character.resourceURI.split("/");
+              const id = strings[strings.length - 1];
+              return (
+                <MyLink key={id} href={`/${id}`}>
+                  {character.name}
+                </MyLink>
+              );
+            })}
           </Links>
         </CharactersItem>
-        <ComicsItem hasComics={hasComics}>
-          <LinkTitle>Comics</LinkTitle>
+        <ComicsItem hasComics={!!item.comics}>
+          <LinkTitle>{t("comics")}</LinkTitle>
           <Links>
-            {item.comics?.map((id) => (
-              <MyLink key={id} href={`/comics/${id}`}>
-                {сomics.find((сomic) => сomic.id === id)?.title}
-              </MyLink>
-            ))}
+            {item.comics?.items?.map((comic) => {
+              const strings = comic.resourceURI.split("/");
+              const id = strings[strings.length - 1];
+              return (
+                <MyLink key={id} href={`/comics/${id}`}>
+                  {comic.name}
+                </MyLink>
+              );
+            })}
           </Links>
         </ComicsItem>
-        <SeriesItem hasSeries={hasSeries}>
-          <LinkTitle>Series</LinkTitle>
+        <SeriesItem hasSeries={!!item.series}>
+          <LinkTitle>{t("series")}</LinkTitle>
           <Links>
-            {item.series?.map((id) => (
-              <MyLink key={id} href={`/series/${id}`}>
-                {series.find((episode) => episode.id === id)?.title}
-              </MyLink>
-            ))}
+            {item.series?.items?.map((episode) => {
+              const strings = episode.resourceURI.split("/");
+              const id = strings[strings.length - 1];
+              return (
+                <MyLink key={id} href={`/series/${id}`}>
+                  {episode.name}
+                </MyLink>
+              );
+            })}
           </Links>
         </SeriesItem>
       </TextItem>
@@ -77,7 +98,7 @@ const About: FC<AboutProps> = ({
   );
 };
 
-export default About;
+export default observer(About);
 
 const Root = styled.div`
   display: flex;
@@ -89,12 +110,13 @@ const ImageItem = styled.img`
   width: auto;
   height: 400px;
 `;
-const TextItem = styled.div`
+const TextItem = styled.div<{ themeIsBlack: boolean }>`
   padding-top: 40px;
   width: 100%;
   display: flex;
   justify-content: space-evenly;
-  color: ${({ theme }) => theme.colors.black};
+  color: ${({ theme, themeIsBlack }) =>
+    themeIsBlack ? theme.colors.white : theme.colors.black};
 `;
 const TitleItem = styled.div`
   width: 30%;

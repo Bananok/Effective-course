@@ -1,78 +1,98 @@
-import React, { FC } from "react";
+import React, { FC, useCallback, useEffect, useState } from "react";
 
+import { observer } from "mobx-react-lite";
+import { useTranslation } from "react-i18next";
+import { Virtuoso } from "react-virtuoso";
 import styled from "styled-components";
 
+import series from "../../api/series";
 import Card from "../../components/Card";
+import Loader from "../../components/Loader";
+import appStore from "../../stores/appStore";
 import { Card as CardType } from "../../types/card";
 
-export const series: CardType[] = [
-  {
-    id: 0,
-    title: "What If...?",
-    desc: '“What If…?” flips the script on the MCU, reimagining famous events from the films in unexpected ways. Marvel Studios’ first animated series focuses on different heroes from the MCU, featuring a voice cast that includes a host of stars who reprise their roles. Directed by Bryan Andrews with AC Bradley as head writer, "What If…?" launches exclusively on Disney+ on August 11, 2021.',
-    image:
-      "https://terrigen-cdn-dev.marvel.com/content/prod/1x/whatif_lob_crd_01.jpg",
-    characters: [0, 1, 2],
-    comics: [0, 1, 2],
-  },
-  {
-    id: 1,
-    title: "Agents of S.H.I.E.L.D.",
-    desc: "“Marvel’s Agents of S.H.I.E.L.D.” stars Clark Gregg, Ming-Na Wen, Chloe Bennet, Iain De Caestecker, Elizabeth Henstridge, Henry Simmons, Natalia Cordova-Buckley and Jeff Ward.",
-    image:
-      "https://terrigen-cdn-dev.marvel.com/content/prod/1x/agentsofshields7_lob_crd_04.jpg",
-    characters: [1, 2, 3],
-    comics: [1, 2],
-  },
-  {
-    id: 2,
-    title: "Marvel's Avengers",
-    desc: "The Black Panther must decide his loyalties. Is he an Avenger first or King of Wakanda? As the mysterious Shadow Council rises to challenge Wakanda, T’Challa teams up with his sister Shuri to go on missions that no other Avenger can. It’s a globe-trotting journey of espionage and mystery as old foes resurface and new friends are made. In the end, Black Panther must balance defending his home and stopping threats before they start. Is he a sword or shield? Only he can decide.",
-    image:
-      "https://terrigen-cdn-dev.marvel.com/content/prod/1x/animatedavengers_lob_crd_02.jpg",
-    characters: [2, 3, 4],
-    comics: [1, 2],
-  },
-  {
-    id: 3,
-    title: "Marvel's Cloak and Dagger",
-    desc: "In Season 2 of Marvel's Cloak & Dagger, Tyrone (Aubrey Joseph) and Tandy (Olivia Holt) face difficult decisions as young heroes. With new enhanced powers, they tackle a heartless vigilante and uncover an evil preying on young women in their city.",
-    image:
-      "https://terrigen-cdn-dev.marvel.com/content/prod/1x/cloakanddagger_lob_crd_02_1.jpg",
-    characters: [0, 1, 2],
-    comics: [0, 1, 2],
-  },
-  {
-    id: 4,
-    title: "Agent Carter",
-    desc: "Dedicated to the fight against new Atomic Age threats in the wake of World War II, Peggy must now journey from New York City to Los Angeles for her most dangerous assignment yet. But even as she descovers new friends, a new home – perhaps even a new love – she's about to find out that the bright lights of the post-war Hollywood mask a more sinister threat to everyone she is sworn to protect.",
-    image:
-      "https://terrigen-cdn-dev.marvel.com/content/prod/1x/agentcarters2_lob_crd_03.jpg",
-    characters: [0, 1, 2],
-    comics: [0, 1, 2],
-  },
-];
-
 const Series: FC = () => {
+  const [searchString, setSearchString] = useState<string>("");
+  const [scrollSeries, setScrollSeries] = useState<CardType[]>([]);
+  const [offset, setOffset] = useState<number>(1);
+  const [error, setError] = useState<string>();
+  const { t } = useTranslation();
+  const { themeIsBlack } = appStore;
+
+  const handleSetSearchString = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setSearchString(event.target.value);
+  };
+  const handleSubmitSearch = (event: React.ChangeEvent<HTMLFormElement>) => {
+    searchString
+      ? series
+          .getSearchSeries(0, searchString)
+          .then((res) => setScrollSeries(res))
+      : series.getSeriesScroll(0).then((res) => setScrollSeries(res));
+    event.preventDefault();
+  };
+
+  const getseries = useCallback(async () => {
+    setOffset(offset + 1);
+    searchString
+      ? series
+          .getSearchSeries(offset, searchString)
+          .then((res) => setScrollSeries((prevState) => [...prevState, ...res]))
+      : series
+          .getSeriesScroll(offset)
+          .then((res) =>
+            setScrollSeries((prevState) => [...prevState, ...res])
+          );
+  }, [setScrollSeries, offset, searchString]);
+
+  useEffect(() => {
+    series
+      .getSeriesScroll(0)
+      .then((res) => setScrollSeries(res))
+      .catch((error: { message: string }) => setError(error.message));
+  }, []);
   return (
     <Root>
-      <Title>
-        Series<NumberSeries>({series.length})</NumberSeries>
-      </Title>
-      <SearchItem>
-        <SearchInput placeholder="Search for Series by title" />
-        <SearchButton>SEARCH</SearchButton>
-      </SearchItem>
-      <Cards>
-        {series.map((episode) => (
-          <Card key={episode.id} card={episode} />
-        ))}
-      </Cards>
+      {!!scrollSeries.length ? (
+        <>
+          <Title>
+            {t("series")}
+            <NumberSeries>({scrollSeries.length})</NumberSeries>
+          </Title>
+          <SearchItem onSubmit={handleSubmitSearch}>
+            <SearchInput
+              value={searchString}
+              onChange={handleSetSearchString}
+              placeholder={t("search placeholder") || ""}
+            />
+            <SearchButton themeIsBlack={themeIsBlack} type="submit">
+              {t("search")}
+            </SearchButton>
+          </SearchItem>
+          <Cards>
+            <Virtuoso
+              style={{
+                height: "400px",
+                width: "100%",
+              }}
+              data={scrollSeries}
+              endReached={getseries}
+              overscan={200}
+              itemContent={(index, comic) => {
+                return <Card key={index} card={comic} />;
+              }}
+            />
+          </Cards>
+        </>
+      ) : (
+        <Loader error={error} />
+      )}
     </Root>
   );
 };
 
-export default Series;
+export default observer(Series);
 
 const Root = styled.div``;
 const Title = styled.h1`
@@ -93,20 +113,19 @@ const SearchItem = styled.form`
 const SearchInput = styled.input`
   width: 70%;
 `;
-const SearchButton = styled.button`
+const SearchButton = styled.button<{ themeIsBlack: boolean }>`
   width: 20%;
-  background-color: ${({ theme }) => theme.colors.yellow};
+  background-color: ${({ theme, themeIsBlack }) =>
+    themeIsBlack ? theme.colors.black : theme.colors.yellow};
+  border-color: ${({ themeIsBlack, theme }) =>
+    themeIsBlack ? theme.colors.white : "black"};
   color: ${({ theme }) => theme.colors.white};
   ${({ theme }) => theme.typography.lightL};
   cursor: pointer;
 `;
 const Cards = styled.div`
-  margin: 0 auto;
-  width: 90%;
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  grid-template-rows: repeat(1, 1fr);
-  column-gap: 20px;
-  row-gap: 10px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
   overflow: hidden;
 `;

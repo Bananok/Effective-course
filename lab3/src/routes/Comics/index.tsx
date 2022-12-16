@@ -1,5 +1,6 @@
-import React, { FC, useCallback, useEffect, useState } from "react";
+import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
 
+import debouce from "lodash.debounce";
 import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
 import { Virtuoso } from "react-virtuoso";
@@ -8,42 +9,43 @@ import styled from "styled-components";
 import comics from "../../api/comics";
 import Card from "../../components/Card";
 import Loader from "../../components/Loader";
-import appStore from "../../stores/appStore";
 import { Card as CardType } from "../../types/card";
 
 const Comics: FC = () => {
   const [searchString, setSearchString] = useState<string>("");
   const [scrollComics, setScrollComics] = useState<CardType[]>([]);
+  const [isLoading, setLoading] = useState<boolean>(false);
   const [offset, setOffset] = useState<number>(1);
   const [error, setError] = useState<string>();
   const { t } = useTranslation();
-  const { themeIsBlack } = appStore;
 
   const handleSetSearchString = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setSearchString(event.target.value);
-  };
-  const handleSubmitSearch = (event: React.ChangeEvent<HTMLFormElement>) => {
-    searchString
+    event.target.value
       ? comics
-          .getSearchComics(0, searchString)
+          .getSearchComics(0, event.target.value)
           .then((res) => setScrollComics(res))
       : comics.getComicsScroll(0).then((res) => setScrollComics(res));
-    event.preventDefault();
   };
+  const debouncedResults = useMemo(() => {
+    return debouce(handleSetSearchString, 3000);
+  }, []);
 
   const getComics = useCallback(async () => {
     setOffset(offset + 1);
+    setLoading(true);
     searchString
-      ? comics
+      ? await comics
           .getSearchComics(offset, searchString)
           .then((res) => setScrollComics((prevState) => [...prevState, ...res]))
-      : comics
+      : await comics
           .getComicsScroll(offset)
           .then((res) =>
             setScrollComics((prevState) => [...prevState, ...res])
           );
+    setLoading(false);
   }, [setScrollComics, offset, searchString]);
 
   useEffect(() => {
@@ -52,6 +54,12 @@ const Comics: FC = () => {
       .then((res) => setScrollComics(res))
       .catch((error: { message: string }) => setError(error.message));
   }, []);
+  useEffect(() => {
+    return () => {
+      debouncedResults.cancel();
+    };
+  });
+
   return (
     <Root>
       {!!scrollComics.length ? (
@@ -60,15 +68,11 @@ const Comics: FC = () => {
             {t("comics")}
             <NumberComics>({scrollComics.length})</NumberComics>
           </Title>
-          <SearchItem onSubmit={handleSubmitSearch}>
+          <SearchItem>
             <SearchInput
-              value={searchString}
-              onChange={handleSetSearchString}
+              onChange={debouncedResults}
               placeholder={t("search placeholder") || ""}
             />
-            <SearchButton themeIsBlack={themeIsBlack} type="submit">
-              {t("search")}
-            </SearchButton>
           </SearchItem>
           <Cards>
             <Virtuoso
@@ -88,6 +92,9 @@ const Comics: FC = () => {
       ) : (
         <Loader error={error} />
       )}
+      <Loading isLoading={isLoading}>
+        <Loader isScroll />
+      </Loading>
     </Root>
   );
 };
@@ -107,25 +114,18 @@ const NumberComics = styled.span`
 const SearchItem = styled.form`
   padding: 20px;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   height: 40px;
 `;
 const SearchInput = styled.input`
   width: 70%;
-`;
-const SearchButton = styled.button<{ themeIsBlack: boolean }>`
-  width: 20%;
-  background-color: ${({ theme, themeIsBlack }) =>
-    themeIsBlack ? theme.colors.black : theme.colors.yellow};
-  border-color: ${({ themeIsBlack, theme }) =>
-    themeIsBlack ? theme.colors.white : "black"};
-  color: ${({ theme }) => theme.colors.white};
-  ${({ theme }) => theme.typography.lightL};
-  cursor: pointer;
 `;
 const Cards = styled.div`
   width: 100%;
   display: flex;
   justify-content: center;
   overflow: hidden;
+`;
+const Loading = styled.div<{ isLoading: boolean }>`
+  display: ${({ isLoading }) => (isLoading ? "block" : "none")};
 `;

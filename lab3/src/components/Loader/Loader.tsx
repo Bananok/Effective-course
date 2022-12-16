@@ -4,10 +4,11 @@ import styled from "styled-components";
 
 interface LoaderProps {
   error?: string;
+  isScroll?: boolean;
 }
 
-const Loader: FC<LoaderProps> = ({ error }) => {
-  return <Root>{error || <Loading />}</Root>;
+const Loader: FC<LoaderProps> = ({ error, isScroll }) => {
+  return <Root>{error || <Loading isScroll={isScroll} />}</Root>;
 };
 
 export default Loader;
@@ -19,15 +20,15 @@ const Root = styled.div`
   color: ${({ theme }) => theme.colors.red};
   ${({ theme }) => theme.typography.subtitleM};
 `;
-const Loading = styled.div`
+const Loading = styled.div<{ isScroll?: boolean }>`
   font-size: 40px;
   color: black;
   border: 16px solid ${({ theme }) => theme.colors.gray2};
   border-top: 16px solid ${({ theme }) => theme.colors.blue};
   border-radius: 50%;
   margin: auto;
-  width: 120px;
-  height: 120px;
+  width: ${({ isScroll }) => (isScroll ? "50px" : "120px")};
+  height: ${({ isScroll }) => (isScroll ? "50px" : "120px")};
   animation: spin 2s linear infinite;
   @keyframes spin {
     0% {

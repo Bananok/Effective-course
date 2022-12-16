@@ -6,6 +6,8 @@
     "series": "Кинофильмы",
     "search": "Поиск",
     "data provided": "Данные предоставлены",
-    "search placeholder": "Найдите по имени"
+    "search placeholder": "Найдите по имени",
+    "favourites": "Избранное",
+    "no favourite items": "Нет избранных сущностей"
   }
 }

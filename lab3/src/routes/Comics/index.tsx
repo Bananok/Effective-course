@@ -14,7 +14,7 @@ import { Card as CardType } from "../../types/card";
 const Comics: FC = () => {
   const [searchString, setSearchString] = useState<string>("");
   const [scrollComics, setScrollComics] = useState<CardType[]>([]);
-  const [offset, setOffset] = useState(1);
+  const [offset, setOffset] = useState<number>(1);
   const [error, setError] = useState<string>();
   const { t } = useTranslation();
   const { themeIsBlack } = appStore;

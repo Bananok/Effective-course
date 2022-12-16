@@ -92,7 +92,8 @@ const Logo = styled.img`
 const Buttons = styled.div`
   display: flex;
   padding-right: 10px;
-  width: 400px;
+  width: 500px;
+  justify-content: center;
 `;
 const LanguageItem = styled.div`
   display: flex;

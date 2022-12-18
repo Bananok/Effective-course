@@ -3,6 +3,7 @@ import { RouteObject } from "react-router-dom";
 import About from "./About";
 import Characters from "./Characters";
 import Comics from "./Comics";
+import Favourites from "./Favourites";
 import Series from "./Series";
 
 export const routes: RouteObject[] = [
@@ -39,5 +40,9 @@ export const routes: RouteObject[] = [
         element: <About entities="series" />,
       },
     ],
+  },
+  {
+    path: "/favourites",
+    children: [{ index: true, element: <Favourites /> }],
   },
 ];

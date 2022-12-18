@@ -48,6 +48,13 @@ const Header: FC = () => {
       <Buttons>
         <HeaderButton
           themeIsBlack={themeIsBlack}
+          onClick={() => navigate("/favourites")}
+          isThisPage={pathname === "/favourites"}
+        >
+          {t("favourites")}
+        </HeaderButton>
+        <HeaderButton
+          themeIsBlack={themeIsBlack}
           onClick={() => navigate("/")}
           isThisPage={pathname === "/"}
         >
@@ -92,7 +99,7 @@ const Logo = styled.img`
 const Buttons = styled.div`
   display: flex;
   padding-right: 10px;
-  width: 500px;
+  width: 600px;
   justify-content: center;
 `;
 const LanguageItem = styled.div`

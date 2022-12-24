@@ -1,5 +1,6 @@
-import React, { FC, useCallback, useEffect, useState } from "react";
+import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
 
+import debouce from "lodash.debounce";
 import { observer } from "mobx-react-lite";
 import { useTranslation } from "react-i18next";
 import { Virtuoso } from "react-virtuoso";
@@ -8,14 +9,13 @@ import styled from "styled-components";
 import charactersApi from "../../api/characters";
 import Card from "../../components/Card";
 import Loader from "../../components/Loader";
-import appStore from "../../stores/appStore";
 import { Card as CardType } from "../../types/card";
 
 const Characters: FC = () => {
-  const { themeIsBlack } = appStore;
   const [searchString, setSearchString] = useState<string>("");
   const [scrollCharacters, setScrollCharacters] = useState<CardType[]>([]);
   const [offset, setOffset] = useState<number>(1);
+  const [isLoading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>();
   const { t } = useTranslation();
 
@@ -23,31 +23,33 @@ const Characters: FC = () => {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setSearchString(event.target.value);
-  };
-  const handleSubmitSearch = (event: React.ChangeEvent<HTMLFormElement>) => {
-    searchString
+    event.target.value
       ? charactersApi
-          .getSearchCharacters(0, searchString)
+          .getSearchCharacters(0, event.target.value)
           .then((res) => setScrollCharacters(res))
       : charactersApi
           .getCharactersScroll(0)
           .then((res) => setScrollCharacters(res));
-    event.preventDefault();
   };
+  const debouncedResults = useMemo(() => {
+    return debouce(handleSetSearchString, 3000);
+  }, []);
 
   const getCharacters = useCallback(async () => {
     setOffset(offset + 1);
+    setLoading(true);
     searchString
-      ? charactersApi
+      ? await charactersApi
           .getSearchCharacters(offset, searchString)
           .then((res) =>
             setScrollCharacters((prevState) => [...prevState, ...res])
           )
-      : charactersApi
+      : await charactersApi
           .getCharactersScroll(offset)
           .then((res) =>
             setScrollCharacters((prevState) => [...prevState, ...res])
           );
+    setLoading(false);
   }, [setScrollCharacters, offset, searchString]);
 
   useEffect(() => {
@@ -56,6 +58,11 @@ const Characters: FC = () => {
       .then((res) => setScrollCharacters(res))
       .catch((error: { message: string }) => setError(error.message));
   }, []);
+  useEffect(() => {
+    return () => {
+      debouncedResults.cancel();
+    };
+  });
   return (
     <Root>
       {!!scrollCharacters.length ? (
@@ -64,15 +71,16 @@ const Characters: FC = () => {
             {t("characters")}
             <NumberCharacters>({scrollCharacters.length})</NumberCharacters>
           </Title>
-          <SearchItem onSubmit={handleSubmitSearch}>
+          <SearchItem
+            onSubmit={(event: React.ChangeEvent<HTMLFormElement>) =>
+              event.preventDefault()
+            }
+          >
             <SearchInput
-              value={searchString}
-              onChange={handleSetSearchString}
+              type="text"
+              onChange={debouncedResults}
               placeholder={t("search placeholder") || ""}
             />
-            <SearchButton themeIsBlack={themeIsBlack} type="submit">
-              {t("search")}
-            </SearchButton>
           </SearchItem>
           <Cards>
             <Virtuoso
@@ -92,6 +100,9 @@ const Characters: FC = () => {
       ) : (
         <Loader error={error} />
       )}
+      <Loading isLoading={isLoading}>
+        <Loader isScroll />
+      </Loading>
     </Root>
   );
 };
@@ -111,25 +122,18 @@ const NumberCharacters = styled.span`
 const SearchItem = styled.form`
   padding: 20px;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   height: 40px;
 `;
 const SearchInput = styled.input`
   width: 70%;
-`;
-const SearchButton = styled.button<{ themeIsBlack: boolean }>`
-  width: 20%;
-  background-color: ${({ theme, themeIsBlack }) =>
-    themeIsBlack ? theme.colors.black : theme.colors.yellow};
-  border-color: ${({ themeIsBlack, theme }) =>
-    themeIsBlack ? theme.colors.white : "black"};
-  color: ${({ theme }) => theme.colors.white};
-  ${({ theme }) => theme.typography.lightL};
-  cursor: pointer;
 `;
 const Cards = styled.div`
   width: 100%;
   display: flex;
   justify-content: center;
   overflow: hidden;
+`;
+const Loading = styled.div<{ isLoading: boolean }>`
+  display: ${({ isLoading }) => (isLoading ? "block" : "none")};
 `;

@@ -8,6 +8,8 @@ import styled from "styled-components";
 import characters from "../../api/characters";
 import comics from "../../api/comics";
 import series from "../../api/series";
+import HeartIcon from "../../assets/img/heart.png";
+import RedHeartIcon from "../../assets/img/redHeart.png";
 import Loader from "../../components/Loader";
 import appStore from "../../stores/appStore";
 import { Card } from "../../types/card";
@@ -20,7 +22,7 @@ const About: FC<AboutProps> = ({ entities }) => {
   const { id } = useParams();
   const [item, setItem] = useState<Card>();
   const [error, setError] = useState<string>("");
-  const { themeIsBlack } = appStore;
+  const { themeIsBlack, checkItem, addOrRemoveFavourite } = appStore;
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -45,6 +47,12 @@ const About: FC<AboutProps> = ({ entities }) => {
 
   return (
     <Root>
+      <FavouriteButton>
+        <FavouriteItem
+          onClick={() => addOrRemoveFavourite(item)}
+          src={checkItem(Number(id)) ? RedHeartIcon : HeartIcon}
+        />
+      </FavouriteButton>
       <ImageItem src={`${item.thumbnail.path}.${item.thumbnail.extension}`} />
       <TextItem themeIsBlack={themeIsBlack}>
         <TitleItem>
@@ -101,6 +109,7 @@ const About: FC<AboutProps> = ({ entities }) => {
 export default observer(About);
 
 const Root = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -151,4 +160,31 @@ const ComicsItem = styled.div<{ hasComics?: boolean }>`
 const SeriesItem = styled.div<{ hasSeries?: boolean }>`
   display: ${({ hasSeries }) => (hasSeries ? "flex" : "none")};
   flex-direction: column;
+`;
+const FavouriteButton = styled.button`
+  cursor: pointer;
+  position: absolute;
+  right: 10%;
+  top: 5%;
+  width: max-content;
+  height: max-content;
+  border: none;
+  background: transparent;
+  padding: 0;
+  border-radius: 10px;
+`;
+const FavouriteItem = styled.img`
+  position: absolute;
+  right: 10%;
+  top: 5%;
+  width: 55px;
+  height: 55px;
+  cursor: pointer;
+
+  :hover {
+    width: 58px;
+    height: 58px;
+    right: 3%;
+    top: 6%;
+  }
 `;
